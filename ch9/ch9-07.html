@@ -1,0 +1,2201 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-hans" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>示例: 併發的非阻塞緩存 · Go语言圣经</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-katex/katex.min.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="ch9-08.html" />
+    
+    
+    <link rel="prev" href="ch9-06.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    前言
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../ch0/ch0-01.html">
+            
+                <a href="../ch0/ch0-01.html">
+            
+                    
+                    Go語言起源
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../ch0/ch0-02.html">
+            
+                <a href="../ch0/ch0-02.html">
+            
+                    
+                    Go語言項目
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="../ch0/ch0-03.html">
+            
+                <a href="../ch0/ch0-03.html">
+            
+                    
+                    本書的組織
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../ch0/ch0-04.html">
+            
+                <a href="../ch0/ch0-04.html">
+            
+                    
+                    更多的信息
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.5" data-path="../ch0/ch0-05.html">
+            
+                <a href="../ch0/ch0-05.html">
+            
+                    
+                    致謝
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../ch1/ch1.html">
+            
+                <a href="../ch1/ch1.html">
+            
+                    
+                    入門
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../ch1/ch1-01.html">
+            
+                <a href="../ch1/ch1-01.html">
+            
+                    
+                    Hello, World
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../ch1/ch1-02.html">
+            
+                <a href="../ch1/ch1-02.html">
+            
+                    
+                    命令行參數
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../ch1/ch1-03.html">
+            
+                <a href="../ch1/ch1-03.html">
+            
+                    
+                    查找重複的行
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../ch1/ch1-04.html">
+            
+                <a href="../ch1/ch1-04.html">
+            
+                    
+                    GIF動畫
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="../ch1/ch1-05.html">
+            
+                <a href="../ch1/ch1-05.html">
+            
+                    
+                    獲取URL
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.6" data-path="../ch1/ch1-06.html">
+            
+                <a href="../ch1/ch1-06.html">
+            
+                    
+                    併發獲取多個URL
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.7" data-path="../ch1/ch1-07.html">
+            
+                <a href="../ch1/ch1-07.html">
+            
+                    
+                    Web服務
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.8" data-path="../ch1/ch1-08.html">
+            
+                <a href="../ch1/ch1-08.html">
+            
+                    
+                    本章要點
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../ch2/ch2.html">
+            
+                <a href="../ch2/ch2.html">
+            
+                    
+                    程序結構
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../ch2/ch2-01.html">
+            
+                <a href="../ch2/ch2-01.html">
+            
+                    
+                    命名
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../ch2/ch2-02.html">
+            
+                <a href="../ch2/ch2-02.html">
+            
+                    
+                    聲明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../ch2/ch2-03.html">
+            
+                <a href="../ch2/ch2-03.html">
+            
+                    
+                    變量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../ch2/ch2-04.html">
+            
+                <a href="../ch2/ch2-04.html">
+            
+                    
+                    賦值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" data-path="../ch2/ch2-05.html">
+            
+                <a href="../ch2/ch2-05.html">
+            
+                    
+                    類型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.6" data-path="../ch2/ch2-06.html">
+            
+                <a href="../ch2/ch2-06.html">
+            
+                    
+                    包和文件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.7" data-path="../ch2/ch2-07.html">
+            
+                <a href="../ch2/ch2-07.html">
+            
+                    
+                    作用域
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../ch3/ch3.html">
+            
+                <a href="../ch3/ch3.html">
+            
+                    
+                    基礎數據類型
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../ch3/ch3-01.html">
+            
+                <a href="../ch3/ch3-01.html">
+            
+                    
+                    整型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../ch3/ch3-02.html">
+            
+                <a href="../ch3/ch3-02.html">
+            
+                    
+                    浮點數
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../ch3/ch3-03.html">
+            
+                <a href="../ch3/ch3-03.html">
+            
+                    
+                    複數
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../ch3/ch3-04.html">
+            
+                <a href="../ch3/ch3-04.html">
+            
+                    
+                    布爾型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../ch3/ch3-05.html">
+            
+                <a href="../ch3/ch3-05.html">
+            
+                    
+                    字符串
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../ch3/ch3-06.html">
+            
+                <a href="../ch3/ch3-06.html">
+            
+                    
+                    常量
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../ch4/ch4.html">
+            
+                <a href="../ch4/ch4.html">
+            
+                    
+                    複合數據類型
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../ch4/ch4-01.html">
+            
+                <a href="../ch4/ch4-01.html">
+            
+                    
+                    數組
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../ch4/ch4-02.html">
+            
+                <a href="../ch4/ch4-02.html">
+            
+                    
+                    Slice
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../ch4/ch4-03.html">
+            
+                <a href="../ch4/ch4-03.html">
+            
+                    
+                    Map
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="../ch4/ch4-04.html">
+            
+                <a href="../ch4/ch4-04.html">
+            
+                    
+                    結構體
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.5" data-path="../ch4/ch4-05.html">
+            
+                <a href="../ch4/ch4-05.html">
+            
+                    
+                    JSON
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.6" data-path="../ch4/ch4-06.html">
+            
+                <a href="../ch4/ch4-06.html">
+            
+                    
+                    文本和HTML模板
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../ch5/ch5.html">
+            
+                <a href="../ch5/ch5.html">
+            
+                    
+                    函數
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.6.1" data-path="../ch5/ch5-01.html">
+            
+                <a href="../ch5/ch5-01.html">
+            
+                    
+                    函數聲明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.2" data-path="../ch5/ch5-02.html">
+            
+                <a href="../ch5/ch5-02.html">
+            
+                    
+                    遞歸
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.3" data-path="../ch5/ch5-03.html">
+            
+                <a href="../ch5/ch5-03.html">
+            
+                    
+                    多返回值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.4" data-path="../ch5/ch5-04.html">
+            
+                <a href="../ch5/ch5-04.html">
+            
+                    
+                    錯誤
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.5" data-path="../ch5/ch5-05.html">
+            
+                <a href="../ch5/ch5-05.html">
+            
+                    
+                    函數值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.6" data-path="../ch5/ch5-06.html">
+            
+                <a href="../ch5/ch5-06.html">
+            
+                    
+                    匿名函數
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.7" data-path="../ch5/ch5-07.html">
+            
+                <a href="../ch5/ch5-07.html">
+            
+                    
+                    可變參數
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.8" data-path="../ch5/ch5-08.html">
+            
+                <a href="../ch5/ch5-08.html">
+            
+                    
+                    Deferred函數
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.9" data-path="../ch5/ch5-09.html">
+            
+                <a href="../ch5/ch5-09.html">
+            
+                    
+                    Panic異常
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.10" data-path="../ch5/ch5-10.html">
+            
+                <a href="../ch5/ch5-10.html">
+            
+                    
+                    Recover捕獲異常
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../ch6/ch6.html">
+            
+                <a href="../ch6/ch6.html">
+            
+                    
+                    方法
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1" data-path="../ch6/ch6-01.html">
+            
+                <a href="../ch6/ch6-01.html">
+            
+                    
+                    方法聲明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.2" data-path="../ch6/ch6-02.html">
+            
+                <a href="../ch6/ch6-02.html">
+            
+                    
+                    基於指針對象的方法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.3" data-path="../ch6/ch6-03.html">
+            
+                <a href="../ch6/ch6-03.html">
+            
+                    
+                    通過嵌入結構體來擴展類型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.4" data-path="../ch6/ch6-04.html">
+            
+                <a href="../ch6/ch6-04.html">
+            
+                    
+                    方法值和方法表達式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.5" data-path="../ch6/ch6-05.html">
+            
+                <a href="../ch6/ch6-05.html">
+            
+                    
+                    示例: Bit數組
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7.6" data-path="../ch6/ch6-06.html">
+            
+                <a href="../ch6/ch6-06.html">
+            
+                    
+                    封裝
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../ch7/ch7.html">
+            
+                <a href="../ch7/ch7.html">
+            
+                    
+                    接口
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.8.1" data-path="../ch7/ch7-01.html">
+            
+                <a href="../ch7/ch7-01.html">
+            
+                    
+                    接口是合約
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.2" data-path="../ch7/ch7-02.html">
+            
+                <a href="../ch7/ch7-02.html">
+            
+                    
+                    接口類型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.3" data-path="../ch7/ch7-03.html">
+            
+                <a href="../ch7/ch7-03.html">
+            
+                    
+                    實現接口的條件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.4" data-path="../ch7/ch7-04.html">
+            
+                <a href="../ch7/ch7-04.html">
+            
+                    
+                    flag.Value接口
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.5" data-path="../ch7/ch7-05.html">
+            
+                <a href="../ch7/ch7-05.html">
+            
+                    
+                    接口值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.6" data-path="../ch7/ch7-06.html">
+            
+                <a href="../ch7/ch7-06.html">
+            
+                    
+                    sort.Interface接口
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.7" data-path="../ch7/ch7-07.html">
+            
+                <a href="../ch7/ch7-07.html">
+            
+                    
+                    http.Handler接口
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.8" data-path="../ch7/ch7-08.html">
+            
+                <a href="../ch7/ch7-08.html">
+            
+                    
+                    error接口
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.9" data-path="../ch7/ch7-09.html">
+            
+                <a href="../ch7/ch7-09.html">
+            
+                    
+                    示例: 表達式求值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.10" data-path="../ch7/ch7-10.html">
+            
+                <a href="../ch7/ch7-10.html">
+            
+                    
+                    類型斷言
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.11" data-path="../ch7/ch7-11.html">
+            
+                <a href="../ch7/ch7-11.html">
+            
+                    
+                    基於類型斷言識別錯誤類型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.12" data-path="../ch7/ch7-12.html">
+            
+                <a href="../ch7/ch7-12.html">
+            
+                    
+                    通過類型斷言查詢接口
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.13" data-path="../ch7/ch7-13.html">
+            
+                <a href="../ch7/ch7-13.html">
+            
+                    
+                    類型分支
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.14" data-path="../ch7/ch7-14.html">
+            
+                <a href="../ch7/ch7-14.html">
+            
+                    
+                    示例: 基於標記的XML解碼
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.15" data-path="../ch7/ch7-15.html">
+            
+                <a href="../ch7/ch7-15.html">
+            
+                    
+                    補充幾點
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../ch8/ch8.html">
+            
+                <a href="../ch8/ch8.html">
+            
+                    
+                    Goroutines和Channels
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1" data-path="../ch8/ch8-01.html">
+            
+                <a href="../ch8/ch8-01.html">
+            
+                    
+                    Goroutines
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.2" data-path="../ch8/ch8-02.html">
+            
+                <a href="../ch8/ch8-02.html">
+            
+                    
+                    示例: 併發的Clock服務
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.3" data-path="../ch8/ch8-03.html">
+            
+                <a href="../ch8/ch8-03.html">
+            
+                    
+                    示例: 併發的Echo服務
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.4" data-path="../ch8/ch8-04.html">
+            
+                <a href="../ch8/ch8-04.html">
+            
+                    
+                    Channels
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.5" data-path="../ch8/ch8-05.html">
+            
+                <a href="../ch8/ch8-05.html">
+            
+                    
+                    併發的循環
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.6" data-path="../ch8/ch8-06.html">
+            
+                <a href="../ch8/ch8-06.html">
+            
+                    
+                    示例: 併發的Web爬蟲
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.7" data-path="../ch8/ch8-07.html">
+            
+                <a href="../ch8/ch8-07.html">
+            
+                    
+                    基於select的多路複用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.8" data-path="../ch8/ch8-08.html">
+            
+                <a href="../ch8/ch8-08.html">
+            
+                    
+                    示例: 併發的目錄遍歷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.9" data-path="../ch8/ch8-09.html">
+            
+                <a href="../ch8/ch8-09.html">
+            
+                    
+                    併發的退出
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9.10" data-path="../ch8/ch8-10.html">
+            
+                <a href="../ch8/ch8-10.html">
+            
+                    
+                    示例: 聊天服務
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="ch9.html">
+            
+                <a href="ch9.html">
+            
+                    
+                    基於共享變量的併發
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.10.1" data-path="ch9-01.html">
+            
+                <a href="ch9-01.html">
+            
+                    
+                    競爭條件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.2" data-path="ch9-02.html">
+            
+                <a href="ch9-02.html">
+            
+                    
+                    sync.Mutex互斥鎖
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.3" data-path="ch9-03.html">
+            
+                <a href="ch9-03.html">
+            
+                    
+                    sync.RWMutex讀寫鎖
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.4" data-path="ch9-04.html">
+            
+                <a href="ch9-04.html">
+            
+                    
+                    內存同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.5" data-path="ch9-05.html">
+            
+                <a href="ch9-05.html">
+            
+                    
+                    sync.Once惰性初始化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.6" data-path="ch9-06.html">
+            
+                <a href="ch9-06.html">
+            
+                    
+                    競爭條件檢測
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.10.7" data-path="ch9-07.html">
+            
+                <a href="ch9-07.html">
+            
+                    
+                    示例: 併發的非阻塞緩存
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10.8" data-path="ch9-08.html">
+            
+                <a href="ch9-08.html">
+            
+                    
+                    Goroutines和線程
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="../ch10/ch10.html">
+            
+                <a href="../ch10/ch10.html">
+            
+                    
+                    包和工具
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.11.1" data-path="../ch10/ch10-01.html">
+            
+                <a href="../ch10/ch10-01.html">
+            
+                    
+                    包簡介
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11.2" data-path="../ch10/ch10-02.html">
+            
+                <a href="../ch10/ch10-02.html">
+            
+                    
+                    導入路徑
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11.3" data-path="../ch10/ch10-03.html">
+            
+                <a href="../ch10/ch10-03.html">
+            
+                    
+                    包聲明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11.4" data-path="../ch10/ch10-04.html">
+            
+                <a href="../ch10/ch10-04.html">
+            
+                    
+                    導入聲明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11.5" data-path="../ch10/ch10-05.html">
+            
+                <a href="../ch10/ch10-05.html">
+            
+                    
+                    包的匿名導入
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11.6" data-path="../ch10/ch10-06.html">
+            
+                <a href="../ch10/ch10-06.html">
+            
+                    
+                    包和命名
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11.7" data-path="../ch10/ch10-07.html">
+            
+                <a href="../ch10/ch10-07.html">
+            
+                    
+                    工具
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="../ch11/ch11.html">
+            
+                <a href="../ch11/ch11.html">
+            
+                    
+                    測試
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.12.1" data-path="../ch11/ch11-01.html">
+            
+                <a href="../ch11/ch11-01.html">
+            
+                    
+                    go test
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12.2" data-path="../ch11/ch11-02.html">
+            
+                <a href="../ch11/ch11-02.html">
+            
+                    
+                    測試函數
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12.3" data-path="../ch11/ch11-03.html">
+            
+                <a href="../ch11/ch11-03.html">
+            
+                    
+                    測試覆蓋率
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12.4" data-path="../ch11/ch11-04.html">
+            
+                <a href="../ch11/ch11-04.html">
+            
+                    
+                    基準測試
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12.5" data-path="../ch11/ch11-05.html">
+            
+                <a href="../ch11/ch11-05.html">
+            
+                    
+                    剖析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12.6" data-path="../ch11/ch11-06.html">
+            
+                <a href="../ch11/ch11-06.html">
+            
+                    
+                    示例函數
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="../ch12/ch12.html">
+            
+                <a href="../ch12/ch12.html">
+            
+                    
+                    反射
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.13.1" data-path="../ch12/ch12-01.html">
+            
+                <a href="../ch12/ch12-01.html">
+            
+                    
+                    為何需要反射?
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.2" data-path="../ch12/ch12-02.html">
+            
+                <a href="../ch12/ch12-02.html">
+            
+                    
+                    reflect.Type和reflect.Value
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.3" data-path="../ch12/ch12-03.html">
+            
+                <a href="../ch12/ch12-03.html">
+            
+                    
+                    Display遞歸打印
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.4" data-path="../ch12/ch12-04.html">
+            
+                <a href="../ch12/ch12-04.html">
+            
+                    
+                    示例: 編碼S表達式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.5" data-path="../ch12/ch12-05.html">
+            
+                <a href="../ch12/ch12-05.html">
+            
+                    
+                    通過reflect.Value修改值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.6" data-path="../ch12/ch12-06.html">
+            
+                <a href="../ch12/ch12-06.html">
+            
+                    
+                    示例: 解碼S表達式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.7" data-path="../ch12/ch12-07.html">
+            
+                <a href="../ch12/ch12-07.html">
+            
+                    
+                    獲取結構體字段標籤
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.8" data-path="../ch12/ch12-08.html">
+            
+                <a href="../ch12/ch12-08.html">
+            
+                    
+                    顯示一個類型的方法集
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13.9" data-path="../ch12/ch12-09.html">
+            
+                <a href="../ch12/ch12-09.html">
+            
+                    
+                    幾點忠告
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14" data-path="../ch13/ch13.html">
+            
+                <a href="../ch13/ch13.html">
+            
+                    
+                    底層編程
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.14.1" data-path="../ch13/ch13-01.html">
+            
+                <a href="../ch13/ch13-01.html">
+            
+                    
+                    unsafe.Sizeof, Alignof 和 Offsetof
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14.2" data-path="../ch13/ch13-02.html">
+            
+                <a href="../ch13/ch13-02.html">
+            
+                    
+                    unsafe.Pointer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14.3" data-path="../ch13/ch13-03.html">
+            
+                <a href="../ch13/ch13-03.html">
+            
+                    
+                    示例: 深度相等判斷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14.4" data-path="../ch13/ch13-04.html">
+            
+                <a href="../ch13/ch13-04.html">
+            
+                    
+                    通過cgo調用C代碼
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14.5" data-path="../ch13/ch13-05.html">
+            
+                <a href="../ch13/ch13-05.html">
+            
+                    
+                    幾點忠告
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15" data-path="../appendix/appendix.html">
+            
+                <a href="../appendix/appendix.html">
+            
+                    
+                    附錄
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.15.1" data-path="../appendix/appendix-a-errata.html">
+            
+                <a href="../appendix/appendix-a-errata.html">
+            
+                    
+                    附錄A：原文勘誤
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.2" data-path="../appendix/appendix-b-author.html">
+            
+                <a href="../appendix/appendix-b-author.html">
+            
+                    
+                    附錄B：作者譯者
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.3" data-path="../appendix/appendix-c-cpoyright.html">
+            
+                <a href="../appendix/appendix-c-cpoyright.html">
+            
+                    
+                    附錄C：譯文授權
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15.4" data-path="../appendix/appendix-d-translations.html">
+            
+                <a href="../appendix/appendix-d-translations.html">
+            
+                    
+                    附錄D：其它語言
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本书使用 GitBook 发布
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >示例: 併發的非阻塞緩存</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h2 id="97-&#x793A;&#x4F8B;-&#x4F75;&#x767C;&#x7684;&#x975E;&#x963B;&#x585E;&#x7DE9;&#x5B58;">9.7. &#x793A;&#x4F8B;: &#x4F75;&#x767C;&#x7684;&#x975E;&#x963B;&#x585E;&#x7DE9;&#x5B58;</h2>
+<p>&#x672C;&#x7BC0;&#x4E2D;&#x6211;&#x5011;&#x6703;&#x505A;&#x4E00;&#x500B;&#x7121;&#x963B;&#x585E;&#x7684;&#x7DE9;&#x5B58;&#xFF0C;&#x9019;&#x7A2E;&#x5DE5;&#x5177;&#x53EF;&#x4EE5;&#x5E6B;&#x52A9;&#x6211;&#x5011;&#x4F86;&#x89E3;&#x6C7A;&#x73FE;&#x5BE6;&#x4E16;&#x754C;&#x4E2D;&#x4F75;&#x767C;&#x7A0B;&#x5E8F;&#x51FA;&#x73FE;&#x4F46;&#x6C92;&#x6709;&#x73FE;&#x6210;&#x7684;&#x5EAB;&#x53EF;&#x4EE5;&#x89E3;&#x6C7A;&#x7684;&#x554F;&#x984C;&#x3002;&#x9019;&#x500B;&#x554F;&#x984C;&#x53EB;&#x4F5C;&#x7DE9;&#x5B58;&#xFF08;memoizing&#xFF09;&#x51FD;&#x6578;&#xFF08;&#x8B6F;&#x8A3B;&#xFF1A;Memoization&#x7684;&#x5B9A;&#x7FA9;&#xFF1A; memoization &#x4E00;&#x8A5E;&#x662F;Donald Michie &#x6839;&#x64DA;&#x62C9;&#x4E01;&#x8A9E;memorandum&#x675C;&#x64B0;&#x7684;&#x4E00;&#x500B;&#x8A5E;&#x3002;&#x76F8;&#x61C9;&#x7684;&#x52D5;&#x8A5E;&#x3001;&#x904E;&#x53BB;&#x5206;&#x8A5E;&#x3001;ing&#x5F62;&#x5F0F;&#x6709;memoiz&#x3001;memoized&#x3001;memoizing&#xFF09;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x8AAA;&#xFF0C;&#x6211;&#x5011;&#x9700;&#x8981;&#x7DE9;&#x5B58;&#x51FD;&#x6578;&#x7684;&#x8FD4;&#x56DE;&#x7D50;&#x679C;&#xFF0C;&#x9019;&#x6A23;&#x5728;&#x5C0D;&#x51FD;&#x6578;&#x9032;&#x884C;&#x8ABF;&#x7528;&#x7684;&#x6642;&#x5019;&#xFF0C;&#x6211;&#x5011;&#x5C31;&#x53EA;&#x9700;&#x8981;&#x4E00;&#x6B21;&#x8A08;&#x7B97;&#xFF0C;&#x4E4B;&#x5F8C;&#x53EA;&#x8981;&#x8FD4;&#x56DE;&#x8A08;&#x7B97;&#x7684;&#x7D50;&#x679C;&#x5C31;&#x53EF;&#x4EE5;&#x4E86;&#x3002;&#x6211;&#x5011;&#x7684;&#x89E3;&#x6C7A;&#x65B9;&#x6848;&#x6703;&#x662F;&#x4F75;&#x767C;&#x5B89;&#x5168;&#x4E14;&#x6703;&#x907F;&#x514D;&#x5C0D;&#x6574;&#x500B;&#x7DE9;&#x5B58;&#x52A0;&#x9396;&#x800C;&#x5C0E;&#x81F4;&#x6240;&#x6709;&#x64CD;&#x4F5C;&#x90FD;&#x53BB;&#x722D;&#x4E00;&#x500B;&#x9396;&#x7684;&#x8A2D;&#x8A08;&#x3002;</p>
+<p>&#x6211;&#x5011;&#x5C07;&#x4F7F;&#x7528;&#x4E0B;&#x9762;&#x7684;httpGetBody&#x51FD;&#x6578;&#x4F5C;&#x70BA;&#x6211;&#x5011;&#x9700;&#x8981;&#x7DE9;&#x5B58;&#x7684;&#x51FD;&#x6578;&#x7684;&#x4E00;&#x500B;&#x6A23;&#x4F8B;&#x3002;&#x9019;&#x500B;&#x51FD;&#x6578;&#x6703;&#x53BB;&#x9032;&#x884C;HTTP GET&#x8ACB;&#x6C42;&#x4E26;&#x4E14;&#x7372;&#x53D6;http&#x97FF;&#x61C9;body&#x3002;&#x5C0D;&#x9019;&#x500B;&#x51FD;&#x6578;&#x7684;&#x8ABF;&#x7528;&#x672C;&#x8EAB;&#x958B;&#x92B7;&#x662F;&#x6BD4;&#x8F03;&#x5927;&#x7684;&#xFF0C;&#x6240;&#x4EE5;&#x6211;&#x5011;&#x5118;&#x91CF;&#x907F;&#x514D;&#x5728;&#x4E0D;&#x5FC5;&#x8981;&#x7684;&#x6642;&#x5019;&#x53CD;&#x8986;&#x8ABF;&#x7528;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> httpGetBody(url <span class="hljs-keyword">string</span>) (<span class="hljs-keyword">interface</span>{}, error) {
+    resp, err := http.Get(url)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+    <span class="hljs-keyword">defer</span> resp.Body.Close()
+    <span class="hljs-keyword">return</span> ioutil.ReadAll(resp.Body)
+}
+</code></pre>
+<p>&#x6700;&#x5F8C;&#x4E00;&#x884C;&#x7A0D;&#x5FAE;&#x96B1;&#x85CF;&#x4E86;&#x4E00;&#x4E9B;&#x7D30;&#x7BC0;&#x3002;ReadAll&#x6703;&#x8FD4;&#x56DE;&#x5169;&#x500B;&#x7D50;&#x679C;&#xFF0C;&#x4E00;&#x500B;[]byte&#x6578;&#x7D44;&#x548C;&#x4E00;&#x500B;&#x932F;&#x8AA4;&#xFF0C;&#x4E0D;&#x904E;&#x9019;&#x5169;&#x500B;&#x5C0D;&#x8C61;&#x53EF;&#x4EE5;&#x88AB;&#x8CE6;&#x503C;&#x7D66;httpGetBody&#x7684;&#x8FD4;&#x56DE;&#x8072;&#x660E;&#x88E1;&#x7684;interface{}&#x548C;error&#x985E;&#x578B;&#xFF0C;&#x6240;&#x4EE5;&#x6211;&#x5011;&#x4E5F;&#x5C31;&#x53EF;&#x4EE5;&#x9019;&#x6A23;&#x8FD4;&#x56DE;&#x7D50;&#x679C;&#x4E26;&#x4E14;&#x4E0D;&#x9700;&#x8981;&#x984D;&#x5916;&#x7684;&#x5DE5;&#x4F5C;&#x4E86;&#x3002;&#x6211;&#x5011;&#x5728;httpGetBody&#x4E2D;&#x9078;&#x7528;&#x9019;&#x7A2E;&#x8FD4;&#x56DE;&#x985E;&#x578B;&#x662F;&#x70BA;&#x4E86;&#x4F7F;&#x5176;&#x53EF;&#x4EE5;&#x8207;&#x7DE9;&#x5B58;&#x5339;&#x914D;&#x3002;</p>
+<p>&#x4E0B;&#x9762;&#x662F;&#x6211;&#x5011;&#x8981;&#x8A2D;&#x8A08;&#x7684;cache&#x7684;&#x7B2C;&#x4E00;&#x500B;&#x201C;&#x8349;&#x7A3F;&#x201D;&#xFF1A;</p>
+<p><u><i>gopl.io/ch9/memo1</i></u></p>
+<pre><code class="lang-go"><span class="hljs-comment">// Package memo provides a concurrency-unsafe</span>
+<span class="hljs-comment">// memoization of a function of type Func.</span>
+<span class="hljs-keyword">package</span> memo
+
+<span class="hljs-comment">// A Memo caches the results of calling a Func.</span>
+<span class="hljs-keyword">type</span> Memo <span class="hljs-keyword">struct</span> {
+    f     Func
+    cache <span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]result
+}
+
+<span class="hljs-comment">// Func is the type of the function to memoize.</span>
+<span class="hljs-keyword">type</span> Func <span class="hljs-keyword">func</span>(key <span class="hljs-keyword">string</span>) (<span class="hljs-keyword">interface</span>{}, error)
+
+<span class="hljs-keyword">type</span> result <span class="hljs-keyword">struct</span> {
+    value <span class="hljs-keyword">interface</span>{}
+    err   error
+}
+
+<span class="hljs-keyword">func</span> New(f Func) *Memo {
+    <span class="hljs-keyword">return</span> &amp;Memo{f: f, cache: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]result)}
+}
+
+<span class="hljs-comment">// <span class="hljs-doctag">NOTE:</span> not concurrency-safe!</span>
+<span class="hljs-keyword">func</span> (memo *Memo) Get(key <span class="hljs-keyword">string</span>) (<span class="hljs-keyword">interface</span>{}, error) {
+    res, ok := memo.cache[key]
+    <span class="hljs-keyword">if</span> !ok {
+        res.value, res.err = memo.f(key)
+        memo.cache[key] = res
+    }
+    <span class="hljs-keyword">return</span> res.value, res.err
+}
+</code></pre>
+<p>Memo&#x5BE6;&#x4F8B;&#x6703;&#x8A18;&#x9304;&#x9700;&#x8981;&#x7DE9;&#x5B58;&#x7684;&#x51FD;&#x6578;f&#xFF08;&#x985E;&#x578B;&#x70BA;Func&#xFF09;&#xFF0C;&#x4EE5;&#x53CA;&#x7DE9;&#x5B58;&#x5167;&#x5BB9;&#xFF08;&#x88E1;&#x9762;&#x662F;&#x4E00;&#x500B;string&#x5230;result&#x6620;&#x5C04;&#x7684;map&#xFF09;&#x3002;&#x6BCF;&#x4E00;&#x500B;result&#x90FD;&#x662F;&#x7C21;&#x55AE;&#x7684;&#x51FD;&#x6578;&#x8FD4;&#x56DE;&#x7684;&#x503C;&#x5C0D;&#x5152;&#x2014;&#x2014;&#x4E00;&#x500B;&#x503C;&#x548C;&#x4E00;&#x500B;&#x932F;&#x8AA4;&#x503C;&#x3002;&#x7E7C;&#x7E8C;&#x4E0B;&#x53BB;&#x6211;&#x5011;&#x6703;&#x5C55;&#x793A;&#x4E00;&#x4E9B;Memo&#x7684;&#x8B8A;&#x7A2E;&#xFF0C;&#x4E0D;&#x904E;&#x6240;&#x6709;&#x7684;&#x4F8B;&#x5B50;&#x90FD;&#x6703;&#x9075;&#x5FAA;&#x4E0A;&#x9762;&#x7684;&#x9019;&#x4E9B;&#x65B9;&#x9762;&#x3002;</p>
+<p>&#x4E0B;&#x9762;&#x662F;&#x4E00;&#x500B;&#x4F7F;&#x7528;Memo&#x7684;&#x4F8B;&#x5B50;&#x3002;&#x5C0D;&#x65BC;&#x6D41;&#x5165;&#x7684;URL&#x7684;&#x6BCF;&#x4E00;&#x500B;&#x5143;&#x7D20;&#x6211;&#x5011;&#x90FD;&#x6703;&#x8ABF;&#x7528;Get&#xFF0C;&#x4E26;&#x6253;&#x5370;&#x8ABF;&#x7528;&#x5EF6;&#x6642;&#x4EE5;&#x53CA;&#x5176;&#x8FD4;&#x56DE;&#x7684;&#x6578;&#x64DA;&#x5927;&#x5C0F;&#x7684;log&#xFF1A;</p>
+<pre><code class="lang-go">m := memo.New(httpGetBody)
+<span class="hljs-keyword">for</span> url := <span class="hljs-keyword">range</span> incomingURLs() {
+    start := time.Now()
+    value, err := m.Get(url)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Print(err)
+    }
+    fmt.Printf(<span class="hljs-string">&quot;%s, %s, %d bytes\n&quot;</span>,
+    url, time.Since(start), <span class="hljs-built_in">len</span>(value.([]<span class="hljs-keyword">byte</span>)))
+}
+</code></pre>
+<p>&#x6211;&#x5011;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x6E2C;&#x8A66;&#x5305;&#xFF08;&#x7B2C;11&#x7AE0;&#x7684;&#x4E3B;&#x984C;&#xFF09;&#x4F86;&#x7CFB;&#x7D71;&#x5730;&#x9451;&#x5B9A;&#x7DE9;&#x5B58;&#x7684;&#x6548;&#x679C;&#x3002;&#x5F9E;&#x4E0B;&#x9762;&#x7684;&#x6E2C;&#x8A66;&#x8F38;&#x51FA;&#xFF0C;&#x6211;&#x5011;&#x53EF;&#x4EE5;&#x770B;&#x5230;URL&#x6D41;&#x5305;&#x542B;&#x4E86;&#x4E00;&#x4E9B;&#x91CD;&#x8907;&#x7684;&#x60C5;&#x6CC1;&#xFF0C;&#x5118;&#x7BA1;&#x6211;&#x5011;&#x7B2C;&#x4E00;&#x6B21;&#x5C0D;&#x6BCF;&#x4E00;&#x500B;URL&#x7684;<code>(*Memo).Get</code>&#x7684;&#x8ABF;&#x7528;&#x90FD;&#x6703;&#x82B1;&#x4E0A;&#x5E7E;&#x767E;&#x6BEB;&#x79D2;&#xFF0C;&#x4F46;&#x7B2C;&#x4E8C;&#x6B21;&#x5C31;&#x53EA;&#x9700;&#x8981;&#x82B1;1&#x6BEB;&#x79D2;&#x5C31;&#x53EF;&#x4EE5;&#x8FD4;&#x56DE;&#x5B8C;&#x6574;&#x7684;&#x6578;&#x64DA;&#x4E86;&#x3002;</p>
+<pre><code>$ go test -v gopl.io/ch9/memo1
+=== RUN   Test
+https://golang.org, 175.026418ms, 7537 bytes
+https://godoc.org, 172.686825ms, 6878 bytes
+https://play.golang.org, 115.762377ms, 5767 bytes
+http://gopl.io, 749.887242ms, 2856 bytes
+https://golang.org, 721ns, 7537 bytes
+https://godoc.org, 152ns, 6878 bytes
+https://play.golang.org, 205ns, 5767 bytes
+http://gopl.io, 326ns, 2856 bytes
+--- PASS: Test (1.21s)
+PASS
+ok  gopl.io/ch9/memo1   1.257s
+</code></pre><p>&#x9019;&#x500B;&#x6E2C;&#x8A66;&#x662F;&#x9806;&#x5E8F;&#x5730;&#x53BB;&#x505A;&#x6240;&#x6709;&#x7684;&#x8ABF;&#x7528;&#x7684;&#x3002;</p>
+<p>&#x7531;&#x65BC;&#x9019;&#x7A2E;&#x5F7C;&#x6B64;&#x7368;&#x7ACB;&#x7684;HTTP&#x8ACB;&#x6C42;&#x53EF;&#x4EE5;&#x5F88;&#x597D;&#x5730;&#x4F75;&#x767C;&#xFF0C;&#x6211;&#x5011;&#x53EF;&#x4EE5;&#x628A;&#x9019;&#x500B;&#x6E2C;&#x8A66;&#x6539;&#x6210;&#x4F75;&#x767C;&#x5F62;&#x5F0F;&#x3002;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;sync.WaitGroup&#x4F86;&#x7B49;&#x5F85;&#x6240;&#x6709;&#x7684;&#x8ACB;&#x6C42;&#x90FD;&#x5B8C;&#x6210;&#x4E4B;&#x5F8C;&#x518D;&#x8FD4;&#x56DE;&#x3002;</p>
+<pre><code class="lang-go">m := memo.New(httpGetBody)
+<span class="hljs-keyword">var</span> n sync.WaitGroup
+<span class="hljs-keyword">for</span> url := <span class="hljs-keyword">range</span> incomingURLs() {
+    n.Add(<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">go</span> <span class="hljs-keyword">func</span>(url <span class="hljs-keyword">string</span>) {
+        start := time.Now()
+        value, err := m.Get(url)
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            log.Print(err)
+        }
+        fmt.Printf(<span class="hljs-string">&quot;%s, %s, %d bytes\n&quot;</span>,
+        url, time.Since(start), <span class="hljs-built_in">len</span>(value.([]<span class="hljs-keyword">byte</span>)))
+        n.Done()
+    }(url)
+}
+n.Wait()
+</code></pre>
+<p>&#x9019;&#x6B21;&#x6E2C;&#x8A66;&#x8DD1;&#x8D77;&#x4F86;&#x66F4;&#x5FEB;&#x4E86;&#xFF0C;&#x7136;&#x800C;&#x4E0D;&#x5E78;&#x7684;&#x662F;&#x8C8C;&#x4F3C;&#x9019;&#x500B;&#x6E2C;&#x8A66;&#x4E0D;&#x662F;&#x6BCF;&#x6B21;&#x90FD;&#x80FD;&#x5920;&#x6B63;&#x5E38;&#x5DE5;&#x4F5C;&#x3002;&#x6211;&#x5011;&#x6CE8;&#x610F;&#x5230;&#x6709;&#x4E00;&#x4E9B;&#x610F;&#x6599;&#x4E4B;&#x5916;&#x7684;cache miss&#xFF08;&#x7DE9;&#x5B58;&#x672A;&#x547D;&#x4E2D;&#xFF09;&#xFF0C;&#x6216;&#x8005;&#x547D;&#x4E2D;&#x4E86;&#x7DE9;&#x5B58;&#x4F46;&#x537B;&#x8FD4;&#x56DE;&#x4E86;&#x932F;&#x8AA4;&#x7684;&#x503C;&#xFF0C;&#x6216;&#x8005;&#x751A;&#x81F3;&#x6703;&#x76F4;&#x63A5;&#x5D29;&#x6F70;&#x3002;</p>
+<p>&#x4F46;&#x66F4;&#x7CDF;&#x7CD5;&#x7684;&#x662F;&#xFF0C;&#x6709;&#x6642;&#x5019;&#x9019;&#x500B;&#x7A0B;&#x5E8F;&#x9084;&#x662F;&#x80FD;&#x6B63;&#x78BA;&#x7684;&#x904B;&#x884C;&#xFF08;&#x8B6F;&#xFF1A;&#x4E5F;&#x5C31;&#x662F;&#x6700;&#x8B93;&#x4EBA;&#x5D29;&#x6F70;&#x7684;&#x5076;&#x767C;bug&#xFF09;&#xFF0C;&#x6240;&#x4EE5;&#x6211;&#x5011;&#x751A;&#x81F3;&#x53EF;&#x80FD;&#x90FD;&#x4E0D;&#x6703;&#x610F;&#x8B58;&#x5230;&#x9019;&#x500B;&#x7A0B;&#x5E8F;&#x6709;bug&#x3002;&#x4F46;&#x662F;&#x6211;&#x5011;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;-race&#x9019;&#x500B;flag&#x4F86;&#x904B;&#x884C;&#x7A0B;&#x5E8F;&#xFF0C;&#x7AF6;&#x722D;&#x6AA2;&#x6E2C;&#x5668;&#xFF08;&#xA7;9.6&#xFF09;&#x6703;&#x6253;&#x5370;&#x50CF;&#x4E0B;&#x9762;&#x9019;&#x6A23;&#x7684;&#x5831;&#x544A;&#xFF1A;</p>
+<pre><code>$ go test -run=TestConcurrent -race -v gopl.io/ch9/memo1
+=== RUN   TestConcurrent
+...
+WARNING: DATA RACE
+Write by goroutine 36:
+  runtime.mapassign1()
+      ~/go/src/runtime/hashmap.go:411 +0x0
+  gopl.io/ch9/memo1.(*Memo).Get()
+      ~/gobook2/src/gopl.io/ch9/memo1/memo.go:32 +0x205
+  ...
+Previous write by goroutine 35:
+  runtime.mapassign1()
+      ~/go/src/runtime/hashmap.go:411 +0x0
+  gopl.io/ch9/memo1.(*Memo).Get()
+      ~/gobook2/src/gopl.io/ch9/memo1/memo.go:32 +0x205
+...
+Found 1 data race(s)
+FAIL    gopl.io/ch9/memo1   2.393s
+</code></pre><p>memo.go&#x7684;32&#x884C;&#x51FA;&#x73FE;&#x4E86;&#x5169;&#x6B21;&#xFF0C;&#x8AAA;&#x660E;&#x6709;&#x5169;&#x500B;goroutine&#x5728;&#x6C92;&#x6709;&#x540C;&#x6B65;&#x5E72;&#x9810;&#x7684;&#x60C5;&#x6CC1;&#x4E0B;&#x66F4;&#x65B0;&#x4E86;cache map&#x3002;&#x9019;&#x8868;&#x660E;Get&#x4E0D;&#x662F;&#x4F75;&#x767C;&#x5B89;&#x5168;&#x7684;&#xFF0C;&#x5B58;&#x5728;&#x6578;&#x64DA;&#x7AF6;&#x722D;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-number">28</span>  <span class="hljs-keyword">func</span> (memo *Memo) Get(key <span class="hljs-keyword">string</span>) (<span class="hljs-keyword">interface</span>{}, error) {
+<span class="hljs-number">29</span>      res, ok := memo.cache(key)
+<span class="hljs-number">30</span>      <span class="hljs-keyword">if</span> !ok {
+<span class="hljs-number">31</span>          res.value, res.err = memo.f(key)
+<span class="hljs-number">32</span>          memo.cache[key] = res
+<span class="hljs-number">33</span>      }
+<span class="hljs-number">34</span>      <span class="hljs-keyword">return</span> res.value, res.err
+<span class="hljs-number">35</span>  }
+</code></pre>
+<p>&#x6700;&#x7C21;&#x55AE;&#x7684;&#x4F7F;cache&#x4F75;&#x767C;&#x5B89;&#x5168;&#x7684;&#x65B9;&#x5F0F;&#x662F;&#x4F7F;&#x7528;&#x57FA;&#x65BC;&#x76E3;&#x63A7;&#x7684;&#x540C;&#x6B65;&#x3002;&#x53EA;&#x8981;&#x7D66;Memo&#x52A0;&#x4E0A;&#x4E00;&#x500B;mutex&#xFF0C;&#x5728;Get&#x7684;&#x4E00;&#x958B;&#x59CB;&#x7372;&#x53D6;&#x4E92;&#x65A5;&#x9396;&#xFF0C;return&#x7684;&#x6642;&#x5019;&#x91CB;&#x653E;&#x9396;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x8B93;cache&#x7684;&#x64CD;&#x4F5C;&#x767C;&#x751F;&#x5728;&#x81E8;&#x754C;&#x5340;&#x5167;&#x4E86;&#xFF1A;</p>
+<p><u><i>gopl.io/ch9/memo2</i></u></p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> Memo <span class="hljs-keyword">struct</span> {
+    f     Func
+    mu    sync.Mutex <span class="hljs-comment">// guards cache</span>
+    cache <span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]result
+}
+
+<span class="hljs-comment">// Get is concurrency-safe.</span>
+<span class="hljs-keyword">func</span> (memo *Memo) Get(key <span class="hljs-keyword">string</span>) (value <span class="hljs-keyword">interface</span>{}, err error) {
+    memo.mu.Lock()
+    res, ok := memo.cache[key]
+    <span class="hljs-keyword">if</span> !ok {
+        res.value, res.err = memo.f(key)
+        memo.cache[key] = res
+    }
+    memo.mu.Unlock()
+    <span class="hljs-keyword">return</span> res.value, res.err
+}
+</code></pre>
+<p>&#x6E2C;&#x8A66;&#x4F9D;&#x7136;&#x4F75;&#x767C;&#x9032;&#x884C;&#xFF0C;&#x4F46;&#x9019;&#x56DE;&#x7AF6;&#x722D;&#x6AA2;&#x67E5;&#x5668;&#x201C;&#x6C89;&#x9ED8;&#x201D;&#x4E86;&#x3002;&#x4E0D;&#x5E78;&#x7684;&#x662F;&#x5C0D;&#x65BC;Memo&#x7684;&#x9019;&#x4E00;&#x9EDE;&#x6539;&#x8B8A;&#x4F7F;&#x6211;&#x5011;&#x5B8C;&#x5168;&#x55AA;&#x5931;&#x4E86;&#x4F75;&#x767C;&#x7684;&#x6027;&#x80FD;&#x512A;&#x9EDE;&#x3002;&#x6BCF;&#x6B21;&#x5C0D;f&#x7684;&#x8ABF;&#x7528;&#x671F;&#x9593;&#x90FD;&#x6703;&#x6301;&#x6709;&#x9396;&#xFF0C;Get&#x5C07;&#x672C;&#x4F86;&#x53EF;&#x4EE5;&#x4E26;&#x884C;&#x904B;&#x884C;&#x7684;I/O&#x64CD;&#x4F5C;&#x4E32;&#x884C;&#x5316;&#x4E86;&#x3002;&#x6211;&#x5011;&#x672C;&#x7AE0;&#x7684;&#x76EE;&#x7684;&#x662F;&#x5B8C;&#x6210;&#x4E00;&#x500B;&#x7121;&#x9396;&#x7DE9;&#x5B58;&#xFF0C;&#x800C;&#x4E0D;&#x662F;&#x73FE;&#x5728;&#x9019;&#x6A23;&#x7684;&#x5C07;&#x6240;&#x6709;&#x8ACB;&#x6C42;&#x4E32;&#x884C;&#x5316;&#x7684;&#x51FD;&#x6578;&#x7684;&#x7DE9;&#x5B58;&#x3002;</p>
+<p>&#x4E0B;&#x4E00;&#x500B;Get&#x7684;&#x5BE6;&#x73FE;&#xFF0C;&#x8ABF;&#x7528;Get&#x7684;goroutine&#x6703;&#x5169;&#x6B21;&#x7372;&#x53D6;&#x9396;&#xFF1A;&#x67E5;&#x627E;&#x968E;&#x6BB5;&#x7372;&#x53D6;&#x4E00;&#x6B21;&#xFF0C;&#x5982;&#x679C;&#x67E5;&#x627E;&#x6C92;&#x6709;&#x8FD4;&#x56DE;&#x4EFB;&#x4F55;&#x5167;&#x5BB9;&#xFF0C;&#x90A3;&#x9EBC;&#x9032;&#x5165;&#x66F4;&#x65B0;&#x968E;&#x6BB5;&#x6703;&#x518D;&#x6B21;&#x7372;&#x53D6;&#x3002;&#x5728;&#x9019;&#x5169;&#x6B21;&#x7372;&#x53D6;&#x9396;&#x7684;&#x4E2D;&#x9593;&#x968E;&#x6BB5;&#xFF0C;&#x5176;&#x5B83;goroutine&#x53EF;&#x4EE5;&#x96A8;&#x610F;&#x4F7F;&#x7528;cache&#x3002;</p>
+<p><u><i>gopl.io/ch9/memo3</i></u></p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> (memo *Memo) Get(key <span class="hljs-keyword">string</span>) (value <span class="hljs-keyword">interface</span>{}, err error) {
+    memo.mu.Lock()
+    res, ok := memo.cache[key]
+    memo.mu.Unlock()
+    <span class="hljs-keyword">if</span> !ok {
+        res.value, res.err = memo.f(key)
+
+        <span class="hljs-comment">// Between the two critical sections, several goroutines</span>
+        <span class="hljs-comment">// may race to compute f(key) and update the map.</span>
+        memo.mu.Lock()
+        memo.cache[key] = res
+        memo.mu.Unlock()
+    }
+    <span class="hljs-keyword">return</span> res.value, res.err
+}
+</code></pre>
+<p>&#x9019;&#x4E9B;&#x4FEE;&#x6539;&#x4F7F;&#x6027;&#x80FD;&#x518D;&#x6B21;&#x5F97;&#x5230;&#x4E86;&#x63D0;&#x5347;&#xFF0C;&#x4F46;&#x6709;&#x4E00;&#x4E9B;URL&#x88AB;&#x7372;&#x53D6;&#x4E86;&#x5169;&#x6B21;&#x3002;&#x9019;&#x7A2E;&#x60C5;&#x6CC1;&#x5728;&#x5169;&#x500B;&#x4EE5;&#x4E0A;&#x7684;goroutine&#x540C;&#x4E00;&#x6642;&#x523B;&#x8ABF;&#x7528;Get&#x4F86;&#x8ACB;&#x6C42;&#x540C;&#x6A23;&#x7684;URL&#x6642;&#x6703;&#x767C;&#x751F;&#x3002;&#x591A;&#x500B;goroutine&#x4E00;&#x8D77;&#x67E5;&#x8A62;cache&#xFF0C;&#x767C;&#x73FE;&#x6C92;&#x6709;&#x503C;&#xFF0C;&#x7136;&#x5F8C;&#x4E00;&#x8D77;&#x8ABF;&#x7528;f&#x9019;&#x500B;&#x6162;&#x4E0D;&#x62C9;&#x5630;&#x7684;&#x51FD;&#x6578;&#x3002;&#x5728;&#x5F97;&#x5230;&#x7D50;&#x679C;&#x5F8C;&#xFF0C;&#x4E5F;&#x90FD;&#x6703;&#x53BB;&#x66F4;&#x65B0;map&#x3002;&#x5176;&#x4E2D;&#x4E00;&#x500B;&#x7372;&#x5F97;&#x7684;&#x7D50;&#x679C;&#x6703;&#x8986;&#x84CB;&#x6389;&#x53E6;&#x4E00;&#x500B;&#x7684;&#x7D50;&#x679C;&#x3002;</p>
+<p>&#x7406;&#x60F3;&#x60C5;&#x6CC1;&#x4E0B;&#x662F;&#x61C9;&#x8A72;&#x907F;&#x514D;&#x6389;&#x591A;&#x9918;&#x7684;&#x5DE5;&#x4F5C;&#x7684;&#x3002;&#x800C;&#x9019;&#x7A2E;&#x201C;&#x907F;&#x514D;&#x201D;&#x5DE5;&#x4F5C;&#x4E00;&#x822C;&#x88AB;&#x7A31;&#x70BA;duplicate suppression&#xFF08;&#x91CD;&#x8907;&#x6291;&#x5236;/&#x907F;&#x514D;&#xFF09;&#x3002;&#x4E0B;&#x9762;&#x7248;&#x672C;&#x7684;Memo&#x6BCF;&#x4E00;&#x500B;map&#x5143;&#x7D20;&#x90FD;&#x662F;&#x6307;&#x5411;&#x4E00;&#x500B;&#x689D;&#x76EE;&#x7684;&#x6307;&#x91DD;&#x3002;&#x6BCF;&#x4E00;&#x500B;&#x689D;&#x76EE;&#x5305;&#x542B;&#x5C0D;&#x51FD;&#x6578;f&#x8ABF;&#x7528;&#x7D50;&#x679C;&#x7684;&#x5167;&#x5BB9;&#x7DE9;&#x5B58;&#x3002;&#x8207;&#x4E4B;&#x524D;&#x4E0D;&#x540C;&#x7684;&#x662F;&#x9019;&#x6B21;entry&#x9084;&#x5305;&#x542B;&#x4E86;&#x4E00;&#x500B;&#x53EB;ready&#x7684;channel&#x3002;&#x5728;&#x689D;&#x76EE;&#x7684;&#x7D50;&#x679C;&#x88AB;&#x8A2D;&#x7F6E;&#x4E4B;&#x5F8C;&#xFF0C;&#x9019;&#x500B;channel&#x5C31;&#x6703;&#x88AB;&#x95DC;&#x9589;&#xFF0C;&#x4EE5;&#x5411;&#x5176;&#x5B83;goroutine&#x5EE3;&#x64AD;&#xFF08;&#xA7;8.9&#xFF09;&#x53BB;&#x8B80;&#x53D6;&#x8A72;&#x689D;&#x76EE;&#x5167;&#x7684;&#x7D50;&#x679C;&#x662F;&#x5B89;&#x5168;&#x7684;&#x4E86;&#x3002;</p>
+<p><u><i>gopl.io/ch9/memo4</i></u></p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> entry <span class="hljs-keyword">struct</span> {
+    res   result
+    ready <span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{} <span class="hljs-comment">// closed when res is ready</span>
+}
+
+<span class="hljs-keyword">func</span> New(f Func) *Memo {
+    <span class="hljs-keyword">return</span> &amp;Memo{f: f, cache: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]*entry)}
+}
+
+<span class="hljs-keyword">type</span> Memo <span class="hljs-keyword">struct</span> {
+    f     Func
+    mu    sync.Mutex <span class="hljs-comment">// guards cache</span>
+    cache <span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]*entry
+}
+
+<span class="hljs-keyword">func</span> (memo *Memo) Get(key <span class="hljs-keyword">string</span>) (value <span class="hljs-keyword">interface</span>{}, err error) {
+    memo.mu.Lock()
+    e := memo.cache[key]
+    <span class="hljs-keyword">if</span> e == <span class="hljs-literal">nil</span> {
+        <span class="hljs-comment">// This is the first request for this key.</span>
+        <span class="hljs-comment">// This goroutine becomes responsible for computing</span>
+        <span class="hljs-comment">// the value and broadcasting the ready condition.</span>
+        e = &amp;entry{ready: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{})}
+        memo.cache[key] = e
+        memo.mu.Unlock()
+
+        e.res.value, e.res.err = memo.f(key)
+
+        <span class="hljs-built_in">close</span>(e.ready) <span class="hljs-comment">// broadcast ready condition</span>
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// This is a repeat request for this key.</span>
+        memo.mu.Unlock()
+
+        &lt;-e.ready <span class="hljs-comment">// wait for ready condition</span>
+    }
+    <span class="hljs-keyword">return</span> e.res.value, e.res.err
+}
+</code></pre>
+<p>&#x73FE;&#x5728;Get&#x51FD;&#x6578;&#x5305;&#x62EC;&#x4E0B;&#x9762;&#x9019;&#x4E9B;&#x6B65;&#x9A5F;&#x4E86;&#xFF1A;&#x7372;&#x53D6;&#x4E92;&#x65A5;&#x9396;&#x4F86;&#x4FDD;&#x8B77;&#x5171;&#x4EAB;&#x8B8A;&#x91CF;cache map&#xFF0C;&#x67E5;&#x8A62;map&#x4E2D;&#x662F;&#x5426;&#x5B58;&#x5728;&#x6307;&#x5B9A;&#x689D;&#x76EE;&#xFF0C;&#x5982;&#x679C;&#x6C92;&#x6709;&#x627E;&#x5230;&#x90A3;&#x9EBC;&#x5206;&#x914D;&#x7A7A;&#x9593;&#x63D2;&#x5165;&#x4E00;&#x500B;&#x65B0;&#x689D;&#x76EE;&#xFF0C;&#x91CB;&#x653E;&#x4E92;&#x65A5;&#x9396;&#x3002;&#x5982;&#x679C;&#x5B58;&#x5728;&#x689D;&#x76EE;&#x7684;&#x8A71;&#x4E14;&#x5176;&#x503C;&#x6C92;&#x6709;&#x5BEB;&#x5165;&#x5B8C;&#x6210;&#xFF08;&#x4E5F;&#x5C31;&#x662F;&#x6709;&#x5176;&#x5B83;&#x7684;goroutine&#x5728;&#x8ABF;&#x7528;f&#x9019;&#x500B;&#x6162;&#x51FD;&#x6578;&#xFF09;&#x6642;&#xFF0C;goroutine&#x5FC5;&#x9808;&#x7B49;&#x5F85;&#x503C;ready&#x4E4B;&#x5F8C;&#x624D;&#x80FD;&#x8B80;&#x5230;&#x689D;&#x76EE;&#x7684;&#x7D50;&#x679C;&#x3002;&#x800C;&#x60F3;&#x77E5;&#x9053;&#x662F;&#x5426;ready&#x7684;&#x8A71;&#xFF0C;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x5F9E;ready channel&#x4E2D;&#x8B80;&#x53D6;&#xFF0C;&#x7531;&#x65BC;&#x9019;&#x500B;&#x8B80;&#x53D6;&#x64CD;&#x4F5C;&#x5728;channel&#x95DC;&#x9589;&#x4E4B;&#x524D;&#x4E00;&#x76F4;&#x662F;&#x963B;&#x585E;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x6C92;&#x6709;&#x689D;&#x76EE;&#x7684;&#x8A71;&#xFF0C;&#x9700;&#x8981;&#x5411;map&#x4E2D;&#x63D2;&#x5165;&#x4E00;&#x500B;&#x6C92;&#x6709;&#x6E96;&#x5099;&#x597D;&#x7684;&#x689D;&#x76EE;&#xFF0C;&#x7576;&#x524D;&#x6B63;&#x5728;&#x8ABF;&#x7528;&#x7684;goroutine&#x5C31;&#x9700;&#x8981;&#x8CA0;&#x8CAC;&#x8ABF;&#x7528;&#x6162;&#x51FD;&#x6578;&#x3001;&#x66F4;&#x65B0;&#x689D;&#x76EE;&#x4EE5;&#x53CA;&#x5411;&#x5176;&#x5B83;&#x6240;&#x6709;goroutine&#x5EE3;&#x64AD;&#x689D;&#x76EE;&#x5DF2;&#x7D93;ready&#x53EF;&#x8B80;&#x7684;&#x6D88;&#x606F;&#x4E86;&#x3002;</p>
+<p>&#x689D;&#x76EE;&#x4E2D;&#x7684;e.res.value&#x548C;e.res.err&#x8B8A;&#x91CF;&#x662F;&#x5728;&#x591A;&#x500B;goroutine&#x4E4B;&#x9593;&#x5171;&#x4EAB;&#x7684;&#x3002;&#x5275;&#x5EFA;&#x689D;&#x76EE;&#x7684;goroutine&#x540C;&#x6642;&#x4E5F;&#x6703;&#x8A2D;&#x7F6E;&#x689D;&#x76EE;&#x7684;&#x503C;&#xFF0C;&#x5176;&#x5B83;goroutine&#x5728;&#x6536;&#x5230;&quot;ready&quot;&#x7684;&#x5EE3;&#x64AD;&#x6D88;&#x606F;&#x4E4B;&#x5F8C;&#x7ACB;&#x523B;&#x6703;&#x53BB;&#x8B80;&#x53D6;&#x689D;&#x76EE;&#x7684;&#x503C;&#x3002;&#x5118;&#x7BA1;&#x6703;&#x88AB;&#x591A;&#x500B;goroutine&#x540C;&#x6642;&#x8A2A;&#x554F;&#xFF0C;&#x4F46;&#x537B;&#x4E26;&#x4E0D;&#x9700;&#x8981;&#x4E92;&#x65A5;&#x9396;&#x3002;ready channel&#x7684;&#x95DC;&#x9589;&#x4E00;&#x5B9A;&#x6703;&#x767C;&#x751F;&#x5728;&#x5176;&#x5B83;goroutine&#x63A5;&#x6536;&#x5230;&#x5EE3;&#x64AD;&#x4E8B;&#x4EF6;&#x4E4B;&#x524D;&#xFF0C;&#x56E0;&#x6B64;&#x7B2C;&#x4E00;&#x500B;goroutine&#x5C0D;&#x9019;&#x4E9B;&#x8B8A;&#x91CF;&#x7684;&#x5BEB;&#x64CD;&#x4F5C;&#x662F;&#x4E00;&#x5B9A;&#x767C;&#x751F;&#x5728;&#x9019;&#x4E9B;&#x8B80;&#x64CD;&#x4F5C;&#x4E4B;&#x524D;&#x7684;&#x3002;&#x4E0D;&#x6703;&#x767C;&#x751F;&#x6578;&#x64DA;&#x7AF6;&#x722D;&#x3002;</p>
+<p>&#x9019;&#x6A23;&#x4F75;&#x767C;&#x3001;&#x4E0D;&#x91CD;&#x8907;&#x3001;&#x7121;&#x963B;&#x585E;&#x7684;cache&#x5C31;&#x5B8C;&#x6210;&#x4E86;&#x3002;</p>
+<p>&#x4E0A;&#x9762;&#x9019;&#x6A23;Memo&#x7684;&#x5BE6;&#x73FE;&#x4F7F;&#x7528;&#x4E86;&#x4E00;&#x500B;&#x4E92;&#x65A5;&#x91CF;&#x4F86;&#x4FDD;&#x8B77;&#x591A;&#x500B;goroutine&#x8ABF;&#x7528;Get&#x6642;&#x7684;&#x5171;&#x4EAB;map&#x8B8A;&#x91CF;&#x3002;&#x4E0D;&#x59A8;&#x628A;&#x9019;&#x7A2E;&#x8A2D;&#x8A08;&#x548C;&#x524D;&#x9762;&#x63D0;&#x5230;&#x7684;&#x628A;map&#x8B8A;&#x91CF;&#x9650;&#x5236;&#x5728;&#x4E00;&#x500B;&#x55AE;&#x7368;&#x7684;monitor goroutine&#x7684;&#x65B9;&#x6848;&#x505A;&#x4E00;&#x4E9B;&#x5C0D;&#x6BD4;&#xFF0C;&#x5F8C;&#x8005;&#x5728;&#x8ABF;&#x7528;Get&#x6642;&#x9700;&#x8981;&#x767C;&#x6D88;&#x606F;&#x3002;</p>
+<p>Func&#x3001;result&#x548C;entry&#x7684;&#x8072;&#x660E;&#x548C;&#x4E4B;&#x524D;&#x4FDD;&#x6301;&#x4E00;&#x81F4;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-comment">// Func is the type of the function to memoize.</span>
+<span class="hljs-keyword">type</span> Func <span class="hljs-keyword">func</span>(key <span class="hljs-keyword">string</span>) (<span class="hljs-keyword">interface</span>{}, error)
+
+<span class="hljs-comment">// A result is the result of calling a Func.</span>
+<span class="hljs-keyword">type</span> result <span class="hljs-keyword">struct</span> {
+    value <span class="hljs-keyword">interface</span>{}
+    err   error
+}
+
+<span class="hljs-keyword">type</span> entry <span class="hljs-keyword">struct</span> {
+    res   result
+    ready <span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{} <span class="hljs-comment">// closed when res is ready</span>
+}
+</code></pre>
+<p>&#x7136;&#x800C;Memo&#x985E;&#x578B;&#x73FE;&#x5728;&#x5305;&#x542B;&#x4E86;&#x4E00;&#x500B;&#x53EB;&#x505A;requests&#x7684;channel&#xFF0C;Get&#x7684;&#x8ABF;&#x7528;&#x65B9;&#x7528;&#x9019;&#x500B;channel&#x4F86;&#x548C;monitor goroutine&#x4F86;&#x901A;&#x4FE1;&#x3002;requests channel&#x4E2D;&#x7684;&#x5143;&#x7D20;&#x985E;&#x578B;&#x662F;request&#x3002;Get&#x7684;&#x8ABF;&#x7528;&#x65B9;&#x6703;&#x628A;&#x9019;&#x500B;&#x7D50;&#x69CB;&#x4E2D;&#x7684;&#x5169;&#x7D44;key&#x90FD;&#x586B;&#x5145;&#x597D;&#xFF0C;&#x5BE6;&#x969B;&#x4E0A;&#x7528;&#x9019;&#x5169;&#x500B;&#x8B8A;&#x91CF;&#x4F86;&#x5C0D;&#x51FD;&#x6578;&#x9032;&#x884C;&#x7DE9;&#x5B58;&#x7684;&#x3002;&#x53E6;&#x4E00;&#x500B;&#x53EB;response&#x7684;channel&#x6703;&#x88AB;&#x62FF;&#x4F86;&#x767C;&#x9001;&#x97FF;&#x61C9;&#x7D50;&#x679C;&#x3002;&#x9019;&#x500B;channel&#x53EA;&#x6703;&#x50B3;&#x56DE;&#x4E00;&#x500B;&#x55AE;&#x7368;&#x7684;&#x503C;&#x3002;</p>
+<p><u><i>gopl.io/ch9/memo5</i></u></p>
+<pre><code class="lang-go"><span class="hljs-comment">// A request is a message requesting that the Func be applied to key.</span>
+<span class="hljs-keyword">type</span> request <span class="hljs-keyword">struct</span> {
+    key      <span class="hljs-keyword">string</span>
+    response <span class="hljs-keyword">chan</span>&lt;- result <span class="hljs-comment">// the client wants a single result</span>
+}
+
+<span class="hljs-keyword">type</span> Memo <span class="hljs-keyword">struct</span>{ requests <span class="hljs-keyword">chan</span> request }
+<span class="hljs-comment">// New returns a memoization of f.  Clients must subsequently call Close.</span>
+<span class="hljs-keyword">func</span> New(f Func) *Memo {
+    memo := &amp;Memo{requests: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> request)}
+    <span class="hljs-keyword">go</span> memo.server(f)
+    <span class="hljs-keyword">return</span> memo
+}
+
+<span class="hljs-keyword">func</span> (memo *Memo) Get(key <span class="hljs-keyword">string</span>) (<span class="hljs-keyword">interface</span>{}, error) {
+    response := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> result)
+    memo.requests &lt;- request{key, response}
+    res := &lt;-response
+    <span class="hljs-keyword">return</span> res.value, res.err
+}
+
+<span class="hljs-keyword">func</span> (memo *Memo) Close() { <span class="hljs-built_in">close</span>(memo.requests) }
+</code></pre>
+<p>&#x4E0A;&#x9762;&#x7684;Get&#x65B9;&#x6CD5;&#xFF0C;&#x6703;&#x5275;&#x5EFA;&#x4E00;&#x500B;response channel&#xFF0C;&#x628A;&#x5B83;&#x653E;&#x9032;request&#x7D50;&#x69CB;&#x4E2D;&#xFF0C;&#x7136;&#x5F8C;&#x767C;&#x9001;&#x7D66;monitor goroutine&#xFF0C;&#x7136;&#x5F8C;&#x99AC;&#x4E0A;&#x53C8;&#x6703;&#x63A5;&#x6536;&#x5B83;&#x3002;</p>
+<p>cache&#x8B8A;&#x91CF;&#x88AB;&#x9650;&#x5236;&#x5728;&#x4E86;monitor goroutine <code>`(*Memo).server</code>&#x4E2D;&#xFF0C;&#x4E0B;&#x9762;&#x6703;&#x770B;&#x5230;&#x3002;monitor&#x6703;&#x5728;&#x5FAA;&#x74B0;&#x4E2D;&#x4E00;&#x76F4;&#x8B80;&#x53D6;&#x8ACB;&#x6C42;&#xFF0C;&#x76F4;&#x5230;request channel&#x88AB;Close&#x65B9;&#x6CD5;&#x95DC;&#x9589;&#x3002;&#x6BCF;&#x4E00;&#x500B;&#x8ACB;&#x6C42;&#x90FD;&#x6703;&#x53BB;&#x67E5;&#x8A62;cache&#xFF0C;&#x5982;&#x679C;&#x6C92;&#x6709;&#x627E;&#x5230;&#x689D;&#x76EE;&#x7684;&#x8A71;&#xFF0C;&#x90A3;&#x9EBC;&#x5C31;&#x6703;&#x5275;&#x5EFA;/&#x63D2;&#x5165;&#x4E00;&#x500B;&#x65B0;&#x7684;&#x689D;&#x76EE;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> (memo *Memo) server(f Func) {
+    cache := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]*entry)
+    <span class="hljs-keyword">for</span> req := <span class="hljs-keyword">range</span> memo.requests {
+        e := cache[req.key]
+        <span class="hljs-keyword">if</span> e == <span class="hljs-literal">nil</span> {
+            <span class="hljs-comment">// This is the first request for this key.</span>
+            e = &amp;entry{ready: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{})}
+            cache[req.key] = e
+            <span class="hljs-keyword">go</span> e.call(f, req.key) <span class="hljs-comment">// call f(key)</span>
+        }
+        <span class="hljs-keyword">go</span> e.deliver(req.response)
+    }
+}
+
+<span class="hljs-keyword">func</span> (e *entry) call(f Func, key <span class="hljs-keyword">string</span>) {
+    <span class="hljs-comment">// Evaluate the function.</span>
+    e.res.value, e.res.err = f(key)
+    <span class="hljs-comment">// Broadcast the ready condition.</span>
+    <span class="hljs-built_in">close</span>(e.ready)
+}
+
+<span class="hljs-keyword">func</span> (e *entry) deliver(response <span class="hljs-keyword">chan</span>&lt;- result) {
+    <span class="hljs-comment">// Wait for the ready condition.</span>
+    &lt;-e.ready
+    <span class="hljs-comment">// Send the result to the client.</span>
+    response &lt;- e.res
+}
+</code></pre>
+<p>&#x548C;&#x57FA;&#x65BC;&#x4E92;&#x65A5;&#x91CF;&#x7684;&#x7248;&#x672C;&#x985E;&#x4F3C;&#xFF0C;&#x7B2C;&#x4E00;&#x500B;&#x5C0D;&#x67D0;&#x500B;key&#x7684;&#x8ACB;&#x6C42;&#x9700;&#x8981;&#x8CA0;&#x8CAC;&#x53BB;&#x8ABF;&#x7528;&#x51FD;&#x6578;f&#x4E26;&#x50B3;&#x5165;&#x9019;&#x500B;key&#xFF0C;&#x5C07;&#x7D50;&#x679C;&#x5B58;&#x5728;&#x689D;&#x76EE;&#x88E1;&#xFF0C;&#x4E26;&#x95DC;&#x9589;ready channel&#x4F86;&#x5EE3;&#x64AD;&#x689D;&#x76EE;&#x7684;ready&#x6D88;&#x606F;&#x3002;&#x4F7F;&#x7528;<code>(*entry).call</code>&#x4F86;&#x5B8C;&#x6210;&#x4E0A;&#x8FF0;&#x5DE5;&#x4F5C;&#x3002;</p>
+<p>&#x7DCA;&#x63A5;&#x8457;&#x5C0D;&#x540C;&#x4E00;&#x500B;key&#x7684;&#x8ACB;&#x6C42;&#x6703;&#x767C;&#x73FE;map&#x4E2D;&#x5DF2;&#x7D93;&#x6709;&#x4E86;&#x5B58;&#x5728;&#x7684;&#x689D;&#x76EE;&#xFF0C;&#x7136;&#x5F8C;&#x6703;&#x7B49;&#x5F85;&#x7D50;&#x679C;&#x8B8A;&#x70BA;ready&#xFF0C;&#x4E26;&#x5C07;&#x7D50;&#x679C;&#x5F9E;response&#x767C;&#x9001;&#x7D66;&#x5BA2;&#x6236;&#x7AEF;&#x7684;goroutien&#x3002;&#x4E0A;&#x8FF0;&#x5DE5;&#x4F5C;&#x662F;&#x7528;<code>(*entry).deliver</code>&#x4F86;&#x5B8C;&#x6210;&#x7684;&#x3002;&#x5C0D;call&#x548C;deliver&#x65B9;&#x6CD5;&#x7684;&#x8ABF;&#x7528;&#x5FC5;&#x9808;&#x8B93;&#x5B83;&#x5011;&#x5728;&#x81EA;&#x5DF1;&#x7684;goroutine&#x4E2D;&#x9032;&#x884C;&#x4EE5;&#x78BA;&#x4FDD;monitor goroutines&#x4E0D;&#x6703;&#x56E0;&#x6B64;&#x800C;&#x88AB;&#x963B;&#x585E;&#x4F4F;&#x800C;&#x6C92;&#x6CD5;&#x8655;&#x7406;&#x65B0;&#x7684;&#x8ACB;&#x6C42;&#x3002;</p>
+<p>&#x9019;&#x500B;&#x4F8B;&#x5B50;&#x8AAA;&#x660E;&#x6211;&#x5011;&#x7121;&#x8AD6;&#x7528;&#x4E0A;&#x9396;&#xFF0C;&#x9084;&#x662F;&#x901A;&#x4FE1;&#x4F86;&#x5EFA;&#x7ACB;&#x4F75;&#x767C;&#x7A0B;&#x5E8F;&#x90FD;&#x662F;&#x53EF;&#x884C;&#x7684;&#x3002;</p>
+<p>&#x4E0A;&#x9762;&#x7684;&#x5169;&#x7A2E;&#x65B9;&#x6848;&#x4E26;&#x4E0D;&#x597D;&#x8AAA;&#x7279;&#x5B9A;&#x60C5;&#x5883;&#x4E0B;&#x54EA;&#x7A2E;&#x66F4;&#x597D;&#xFF0C;&#x4E0D;&#x904E;&#x4E86;&#x89E3;&#x4ED6;&#x5011;&#x9084;&#x662F;&#x6709;&#x50F9;&#x503C;&#x7684;&#x3002;&#x6709;&#x6642;&#x5019;&#x5F9E;&#x4E00;&#x7A2E;&#x65B9;&#x5F0F;&#x5207;&#x63DB;&#x5230;&#x53E6;&#x4E00;&#x7A2E;&#x53EF;&#x4EE5;&#x4F7F;&#x4F60;&#x7684;&#x4EE3;&#x78BC;&#x66F4;&#x70BA;&#x7C21;&#x6F54;&#x3002;&#xFF08;&#x8B6F;&#x8A3B;&#xFF1A;&#x4E0D;&#x662F;&#x8AAA;&#x597D;&#x7684;golang&#x63A8;&#x5D07;&#x901A;&#x4FE1;&#x4F75;&#x767C;&#x9EBC;&#x3002;&#xFF09;</p>
+<p><strong>&#x7DF4;&#x7FD2; 9.3&#xFF1A;</strong> &#x64F4;&#x5C55;Func&#x985E;&#x578B;&#x548C;<code>(*Memo).Get</code>&#x65B9;&#x6CD5;&#xFF0C;&#x652F;&#x6301;&#x8ABF;&#x7528;&#x65B9;&#x63D0;&#x4F9B;&#x4E00;&#x500B;&#x53EF;&#x9078;&#x7684;done channel&#xFF0C;&#x4F7F;&#x5176;&#x5177;&#x5099;&#x901A;&#x904E;&#x8A72;channel&#x4F86;&#x53D6;&#x6D88;&#x6574;&#x500B;&#x64CD;&#x4F5C;&#x7684;&#x80FD;&#x529B;&#xFF08;&#xA7;8.9&#xFF09;&#x3002;&#x4E00;&#x500B;&#x88AB;&#x53D6;&#x6D88;&#x4E86;&#x7684;Func&#x7684;&#x8ABF;&#x7528;&#x7D50;&#x679C;&#x4E0D;&#x61C9;&#x8A72;&#x88AB;&#x7DE9;&#x5B58;&#x3002;</p>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="ch9-06.html" class="navigation navigation-prev " aria-label="Previous page: 競爭條件檢測">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="ch9-08.html" class="navigation navigation-next " aria-label="Next page: Goroutines和線程">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"示例: 併發的非阻塞緩存","level":"1.10.7","depth":2,"next":{"title":"Goroutines和線程","level":"1.10.8","depth":2,"path":"ch9/ch9-08.md","ref":"ch9/ch9-08.md","articles":[]},"previous":{"title":"競爭條件檢測","level":"1.10.6","depth":2,"path":"ch9/ch9-06.md","ref":"ch9/ch9-06.md","articles":[]},"dir":"ltr"},"config":{"plugins":["katex","-search","-lunr"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"katex":{},"highlight":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"preface.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Go语言圣经","language":"zh-hans","gitbook":"3.x","description":"<The Go Programming Language>中文版"},"file":{"path":"ch9/ch9-07.md","mtime":"2022-03-31T14:05:01.879Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-03-31T14:05:17.797Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
